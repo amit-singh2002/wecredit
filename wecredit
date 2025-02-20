@@ -1,0 +1,51 @@
+import openai
+
+# Set your OpenAI API key (Replace with your own key)
+OPENAI_API_KEY = "your-api-key"
+
+openai.api_key = OPENAI_API_KEY
+
+# Define a knowledge base for FinTech-related queries
+FINTECH_KNOWLEDGE = """
+I am a chatbot for a FinTech company. I can help you with:
+- Understanding loans and different types of loans.
+- Explaining interest rates and how they affect your repayments.
+- Providing information about credit reports and credit scores.
+- Clarifying terms like CIBIL, credit bureaus, and their role.
+- General financial advice within the scope of customer support.
+"""
+
+def get_response(user_input):
+    """
+    Function to generate a response using OpenAI's GPT model.
+    """
+    prompt = f"{FINTECH_KNOWLEDGE}\nUser: {user_input}\nChatbot:"
+    
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",  # Use a suitable model
+            messages=[{"role": "system", "content": FINTECH_KNOWLEDGE},
+                      {"role": "user", "content": user_input}],
+            max_tokens=150
+        )
+        return response["choices"][0]["message"]["content"]
+    
+    except Exception as e:
+        return f"Error: {str(e)}"
+
+def chat():
+    """
+    A simple chat loop where users can interact with the chatbot.
+    """
+    print("FinTech Chatbot: Hello! How can I assist you today? (Type 'exit' to end)")
+    
+    while True:
+        user_input = input("You: ")
+        if user_input.lower() == "exit":
+            print("FinTech Chatbot: Goodbye!")
+            break
+        response = get_response(user_input)
+        print(f"FinTech Chatbot: {response}")
+
+if __name__ == "__main__":
+    chat()
